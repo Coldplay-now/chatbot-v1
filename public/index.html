@@ -12,7 +12,34 @@
         <div class="title">DeepSeek 助手</div>
       </header>
       <main class="app__content">
-        <div class="messages" id="messages"></div>
+        <div class="messages" id="messages">
+          <div class="welcome" id="welcome">
+            <div class="welcome__title">👋 欢迎使用 DeepSeek 助手</div>
+            <div class="welcome__subtitle">支持 Markdown、数学公式、Mermaid 图表渲染</div>
+            <div class="welcome__examples">
+              <div class="example-card" data-prompt="用数学公式推导一下贝叶斯公式，并解释其含义">
+                <div class="example-icon">📐</div>
+                <div class="example-text">数学公式示例</div>
+                <div class="example-desc">贝叶斯公式推导</div>
+              </div>
+              <div class="example-card" data-prompt="用表格对比一下Python、Java、JavaScript这三种编程语言的特点">
+                <div class="example-icon">📊</div>
+                <div class="example-text">表格示例</div>
+                <div class="example-desc">编程语言对比</div>
+              </div>
+              <div class="example-card" data-prompt="用Mermaid流程图展示用户登录的完整流程，包括验证、错误处理等步骤">
+                <div class="example-icon">🎨</div>
+                <div class="example-text">流程图示例</div>
+                <div class="example-desc">用户登录流程</div>
+              </div>
+              <div class="example-card" data-prompt="解释强化学习中的Q-learning算法，包含状态价值函数的数学公式">
+                <div class="example-icon">🧠</div>
+                <div class="example-text">综合示例</div>
+                <div class="example-desc">Q-learning算法</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
       <form class="app__composer" id="chat-form">
         <textarea
@@ -33,6 +60,9 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" defer></script>
     <script src="./main.js" defer></script>
   </body>
 </html>

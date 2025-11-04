@@ -9,12 +9,19 @@
 
 基于 DeepSeek API 的 ChatGPT 风格聊天机器人网页示例，支持 Markdown 渲染、Mermaid 图表与目录导航。
 
+## 界面预览
+
+![DeepSeek 助手界面](assets/screenshot.png)
+
 ## 功能特性
 
 - **ChatGPT 风格界面**：现代化 UI 设计，支持多轮对话上下文
+- **流式输出**：AI 回复逐字显示，提供流畅的打字机效果
 - **Markdown 渲染**：自动解析并渲染助手回复中的 Markdown 格式（标题、列表、代码块等）
+- **数学公式渲染**：支持 LaTeX 语法，使用 KaTeX 渲染行内和块级数学公式
 - **Mermaid 图表**：支持在对话中渲染流程图、时序图等 Mermaid 图表
-- **智能目录**：自动提取 H2/H3 标题生成浮动目录，点击可快速定位
+- **智能目录**：自动提取 H2/H3 标题生成目录导航，点击可快速定位
+- **示例提示词**：预置 4 个示例卡片，一键发送数学公式、表格、流程图等场景的提问
 - **可配置系统提示词**：通过 `config/systemprompt.md` 自定义 AI 助手角色
 
 ## 快速开始
@@ -95,9 +102,13 @@ window.mermaid.initialize({
 
 ## 技术栈
 
-- **后端**：Node.js + Express
-- **前端**：原生 JavaScript + Marked.js + Mermaid.js
-- **AI 接口**：DeepSeek Chat API
+- **后端**：Node.js + Express + Axios（流式响应）
+- **前端**：原生 JavaScript + Marked.js + Mermaid.js + KaTeX
+- **AI 接口**：DeepSeek Chat API（支持流式输出）
+- **渲染引擎**：
+  - Markdown：Marked.js
+  - 数学公式：KaTeX
+  - 图表：Mermaid.js
 
 ## 许可
 

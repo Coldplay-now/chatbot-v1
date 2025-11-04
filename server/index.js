@@ -51,7 +51,7 @@ app.get('/api/system-prompt', (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const { messages = [], temperature = 0.7, top_p = 0.9 } = req.body || {};
+    const { messages = [], temperature = 0.7, top_p = 0.9, stream = true } = req.body || {};
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'messages 参数不能为空数组' });
@@ -61,12 +61,47 @@ app.post('/api/chat', async (req, res) => {
       return res.status(500).json({ error: 'DeepSeek API Key 未配置' });
     }
 
+    if (!stream) {
+      // 非流式响应
+      const response = await axios.post(
+        'https://api.deepseek.com/v1/chat/completions',
+        {
+          model: 'deepseek-chat',
+          messages,
+          stream: false,
+          temperature,
+          top_p
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${DEEPSEEK_API_KEY}`
+          },
+          timeout: 60_000
+        }
+      );
+
+      const choice = response?.data?.choices?.[0];
+      const reply = choice?.message?.content || '';
+
+      return res.json({
+        reply,
+        usage: response?.data?.usage,
+        providerResponse: response.data
+      });
+    }
+
+    // 流式响应
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
     const response = await axios.post(
       'https://api.deepseek.com/v1/chat/completions',
       {
         model: 'deepseek-chat',
         messages,
-        stream: false,
+        stream: true,
         temperature,
         top_p
       },
@@ -75,24 +110,46 @@ app.post('/api/chat', async (req, res) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${DEEPSEEK_API_KEY}`
         },
+        responseType: 'stream',
         timeout: 60_000
       }
     );
 
-    const choice = response?.data?.choices?.[0];
-    const reply = choice?.message?.content || '';
-
-    return res.json({
-      reply,
-      usage: response?.data?.usage,
-      providerResponse: response.data
+    response.data.on('data', (chunk) => {
+      const lines = chunk.toString().split('\n').filter((line) => line.trim() !== '');
+      for (const line of lines) {
+        const message = line.replace(/^data: /, '');
+        if (message === '[DONE]') {
+          res.write('data: [DONE]\n\n');
+          return;
+        }
+        try {
+          const parsed = JSON.parse(message);
+          res.write(`data: ${JSON.stringify(parsed)}\n\n`);
+        } catch (error) {
+          // 忽略解析错误
+        }
+      }
     });
+
+    response.data.on('end', () => {
+      res.end();
+    });
+
+    response.data.on('error', (error) => {
+      console.error('流式传输错误:', error);
+      res.write(`data: ${JSON.stringify({ error: '流式传输错误' })}\n\n`);
+      res.end();
+    });
+
   } catch (error) {
     console.error('调用 DeepSeek API 失败:', error.response?.data || error.message);
-    return res.status(error.response?.status || 500).json({
-      error: '调用 DeepSeek API 失败',
-      detail: error.response?.data || error.message
-    });
+    if (!res.headersSent) {
+      return res.status(error.response?.status || 500).json({
+        error: '调用 DeepSeek API 失败',
+        detail: error.response?.data || error.message
+      });
+    }
   }
 });
 
