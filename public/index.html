@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepSeek Chatbot Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header">
+        <div class="title">DeepSeek 助手</div>
+      </header>
+      <main class="app__content">
+        <div class="messages" id="messages"></div>
+      </main>
+      <form class="app__composer" id="chat-form">
+        <textarea
+          id="message-input"
+          class="composer__input"
+          placeholder="输入你的问题，按 Enter 发送，Shift+Enter 可换行"
+          rows="1"
+          autocomplete="off"
+          required
+        ></textarea>
+        <div class="composer__footer">
+          <span class="composer__status" id="status-text"></span>
+          <button class="composer__submit" type="submit" id="send-button">
+            发送
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+    <script src="./main.js" defer></script>
+  </body>
+</html>
